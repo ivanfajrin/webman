@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Grid with Sidebar</title>
+    <style>
+        /* Style untuk grid dan tombol */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            width: 80%;
+            margin: auto;
+            margin-top: 50px;
+        }
+
+        .grid-item {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .grid-item a {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+        }
+
+        .grid-item a:hover {
+            background-color: #0056b3;
+        }
+
+        /* Style untuk header dan counter */
+        .header {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .counter {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Style untuk sidebar */
+        .sidebar {
+            height: 100%;
+            width: 300px;
+            position: fixed;
+            top: 0;
+            right: 0;
+            background-color: #333;
+            color: white;
+            overflow-x: hidden;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            padding: 20px;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar h2 {
+            margin-top: 0;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 10px 0;
+        }
+
+        .sidebar ul li span {
+            display: block;
+            font-size: 16px;
+        }
+
+        .open-sidebar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Link Grid</h1>
+        <p>Here you will find a grid of links to various useful websites. Click on the buttons to visit these sites.</p>
+    </div>
+
+    <div class="grid-container" id="link-grid">
+        <!-- Buttons will be inserted here by JavaScript -->
+    </div>
+
+    <div class="counter" id="counter">Total Links: 0</div>
+    
+    <button class="open-sidebar" id="openSidebar">Show Clicks</button>
+
+    <div class="sidebar" id="sidebar">
+        <h2>Link Click Data</h2>
+        <ul id="linkList">
+            <!-- Link data will be inserted here by JavaScript -->
+        </ul>
+    </div>
+
+    <script src="links.js"></script>
+    <script>
+        const linkGrid = document.getElementById('link-grid');
+        const counterElement = document.getElementById('counter');
+        const sidebar = document.getElementById('sidebar');
+        const openSidebarBtn = document.getElementById('openSidebar');
+        const linkList = document.getElementById('linkList');
+
+        // Memuat tautan berdasarkan urutan klik
+        const sortedLinks = sortLinksByClicks();
+
+        sortedLinks.forEach(link => {
+            const gridItem = document.createElement('div');
+            gridItem.classList.add('grid-item');
+            gridItem.innerHTML = `<a href="${link.url}" target="_blank">${link.text}</a>`;
+            
+            // Menambahkan event listener untuk melacak klik
+            gridItem.querySelector('a').addEventListener('click', function() {
+                incrementClickCount(link.text);
+                updateSidebar();
+            });
+
+            linkGrid.appendChild(gridItem);
+        });
+
+        // Update counter untuk menunjukkan jumlah tombol
+        counterElement.innerText = `Total Links: ${sortedLinks.length}`;
+
+        // Update sidebar untuk menampilkan data klik
+        function updateSidebar() {
+            linkList.innerHTML = '';
+            sortedLinks.forEach(link => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<span>${link.text}: ${getClickCount(link.text)} clicks</span>`;
+                linkList.appendChild(listItem);
+            });
+        }
+
+        // Tampilkan sidebar saat tombol diklik
+        openSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            updateSidebar();
+        });
+
+        // Inisialisasi sidebar saat pertama kali dimuat
+        updateSidebar();
+    </script>
+</body>
+</html>
